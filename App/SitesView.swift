@@ -586,8 +586,10 @@ struct SiteCard: View {
         .opacity(dimmed ? 0.45 : 1)
     }
 
-    /// Which engine runs a source is an implementation detail; only built-in sources say so.
-    private var engine: String? { site.isBuiltIn ? L10n.text("Recommended") : nil }
+    /// Which engine runs a source is an implementation detail; only built-in sources say so. They are the app's own
+    /// sources, so the card names them "Built-in" rather than "Recommended", which read as a suggestion rather than
+    /// where the source comes from (#1459).
+    private var engine: String? { site.isBuiltIn ? L10n.text("Built-in") : nil }
 }
 
 /// A launcher tile's own surface (source cards, live playlists).
@@ -854,7 +856,7 @@ private struct SourceOrderRow: View {
     #endif
     var body: some View {
         let label = SourceLabel(site.name)
-        let detail = (label.parts.dropFirst() + [site.isBuiltIn ? L10n.text("Recommended") : nil].compactMap { $0 }).joined(separator: " · ")
+        let detail = (label.parts.dropFirst() + [site.isBuiltIn ? L10n.text("Built-in") : nil].compactMap { $0 }).joined(separator: " · ")
         HStack(spacing: 12) {
             Text(rank, format: .number).font(caption.weight(.semibold)).monospacedDigit()
                 .foregroundStyle(rank <= 3 ? Color.primary : Color.secondary)
