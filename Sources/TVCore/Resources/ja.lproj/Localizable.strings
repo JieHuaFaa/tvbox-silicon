@@ -1403,6 +1403,10 @@
 "A TVBox JSON subscription, an M3U or TXT live playlist, or one Python (.py) or JavaScript (.js) spider." = "TVBox JSON 配信設定、M3U / TXT ライブ再生リスト、または Python（.py）か JavaScript（.js）のスパイダー 1 つ。";
 "This source needs %@, a file next to its config. Only the config file itself was added, so add the config by its web address instead." = "このソースには設定ファイルの隣にある %@ が必要ですが、追加されたのは設定ファイルだけです。設定を URL で追加してください。";
 "LX Music Sources" = "LX Music カスタムソース";
+"Update “%@”" = "「%@」を更新";
+"Updated “%@”." = "「%@」を更新しました。";
+"“%@” is up to date." = "「%@」は最新です。";
+"This source has no address to update from." = "このソースはファイルから追加されたため、更新するアドレスがありません。";
 "LX Music Source" = "LX Music ソース";
 "This file is not an LX Music source." = "このファイルは LX Music のカスタムソースではありません。";
 "This source plays none of the catalogs Yingxia searches (QQ Music, NetEase Cloud Music, Kuwo, Migu)." = "このソースは映匣が検索するカタログ（QQ Music、NetEase Cloud Music、Kuwo、Migu）のどれにも対応していません。";

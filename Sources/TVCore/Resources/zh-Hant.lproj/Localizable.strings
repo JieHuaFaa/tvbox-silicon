@@ -1403,6 +1403,10 @@
 "A TVBox JSON subscription, an M3U or TXT live playlist, or one Python (.py) or JavaScript (.js) spider." = "TVBox JSON 訂閱、M3U / TXT 直播清單，或單一 Python（.py）或 JavaScript（.js）爬蟲。";
 "This source needs %@, a file next to its config. Only the config file itself was added, so add the config by its web address instead." = "此來源需要設定檔旁邊的 %@，但加入時只匯入了設定檔本身。請改用網址加入此設定。";
 "LX Music Sources" = "洛雪音樂自訂源";
+"Update “%@”" = "更新「%@」";
+"Updated “%@”." = "已更新「%@」。";
+"“%@” is up to date." = "「%@」已是最新。";
+"This source has no address to update from." = "此音源是從檔案加入的，沒有可更新的網址。";
 "LX Music Source" = "洛雪音源";
 "This file is not an LX Music source." = "這不是洛雪音樂的自訂源腳本。";
 "This source plays none of the catalogs Yingxia searches (QQ Music, NetEase Cloud Music, Kuwo, Migu)." = "這個音源不支援映匣搜尋的任何曲庫（QQ 音樂、網易雲音樂、酷我、咪咕）。";

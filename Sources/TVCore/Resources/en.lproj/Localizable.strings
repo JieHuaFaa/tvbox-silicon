@@ -1403,6 +1403,10 @@
 "A TVBox JSON subscription, an M3U or TXT live playlist, or one Python (.py) or JavaScript (.js) spider." = "A TVBox JSON subscription, an M3U or TXT live playlist, or one Python (.py) or JavaScript (.js) spider.";
 "This source needs %@, a file next to its config. Only the config file itself was added, so add the config by its web address instead." = "This source needs %@, a file next to its config. Only the config file itself was added, so add the config by its web address instead.";
 "LX Music Sources" = "LX Music Sources";
+"Update “%@”" = "Update “%@”";
+"Updated “%@”." = "Updated “%@”.";
+"“%@” is up to date." = "“%@” is up to date.";
+"This source has no address to update from." = "This source has no address to update from.";
 "LX Music Source" = "LX Music Source";
 "This file is not an LX Music source." = "This file is not an LX Music source.";
 "This source plays none of the catalogs Yingxia searches (QQ Music, NetEase Cloud Music, Kuwo, Migu)." = "This source plays none of the catalogs Yingxia searches (QQ Music, NetEase Cloud Music, Kuwo, Migu).";
