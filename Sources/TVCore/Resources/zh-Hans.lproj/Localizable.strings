@@ -2309,6 +2309,9 @@
 "Traditional" = "繁体";
 "Simplified" = "简体";
 "Page Turn" = "翻页方式";
+"Page Turn Taps" = "翻页点击";
+"Right Side" = "右侧";
+"Left Side" = "左侧";
 "Slide" = "滑动";
 "Curl" = "仿真";
 "Background Image" = "背景图片";

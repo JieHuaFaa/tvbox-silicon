@@ -2309,6 +2309,9 @@
 "Traditional" = "繁体字";
 "Simplified" = "簡体字";
 "Page Turn" = "ページめくり";
+"Page Turn Taps" = "ページ送りタップ";
+"Right Side" = "右側";
+"Left Side" = "左側";
 "Slide" = "スライド";
 "Curl" = "めくり";
 "Background Image" = "背景画像";
