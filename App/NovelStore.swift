@@ -32,6 +32,8 @@ import TVCore
     var theme: NovelTheme { didSet { UserDefaults.standard.set(theme.rawValue, forKey: "novel.theme") } }
     var appearance: NovelAppearance { didSet { UserDefaults.standard.set(appearance.rawValue, forKey: "novel.appearance") } }
     var pageTurn: NovelPageTurn { didSet { UserDefaults.standard.set(pageTurn.rawValue, forKey: "novel.pageTurn") } }
+    /// Paged layout: a tap on the left side turns forward and the right side back, for left-handed reading (#1735).
+    var leftHanded: Bool { didSet { UserDefaults.standard.set(leftHanded, forKey: "novel.leftHanded") } }
     /// Space after each paragraph as a multiple of the font size (#1430).
     var paragraphSpacing: Double { didSet { UserDefaults.standard.set(paragraphSpacing, forKey: "novel.paragraphSpacing") } }
     /// Space above and below the text, in points, on top of the bands for the title and the page count (#1430).
@@ -108,6 +110,7 @@ import TVCore
         theme = NovelTheme(rawValue: defaults.string(forKey: "novel.theme") ?? "") ?? .sepia
         appearance = NovelAppearance(rawValue: defaults.string(forKey: "novel.appearance") ?? "") ?? .automatic
         pageTurn = NovelPageTurn(rawValue: defaults.string(forKey: "novel.pageTurn") ?? "") ?? .pages
+        leftHanded = defaults.bool(forKey: "novel.leftHanded")
         let paragraph = defaults.object(forKey: "novel.paragraphSpacing") as? Double ?? NovelTypeStyle.standardParagraphSpacing
         paragraphSpacing = Self.paragraphSpacingRange.contains(paragraph) ? paragraph : NovelTypeStyle.standardParagraphSpacing
         verticalMargin = min(Self.verticalMarginRange.upperBound, max(0, defaults.double(forKey: "novel.verticalMargin")))

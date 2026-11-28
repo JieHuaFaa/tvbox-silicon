@@ -828,8 +828,13 @@ struct NovelReaderView: View {
         if panel != nil { withAnimation(.smooth) { panel = nil }; return }
         if chrome { withAnimation(.smooth) { chrome = false }; return }
         if store.pageTurn == .pages {
-            if location.x < size.width * 0.3 { turn(forward: false) }
-            else if location.x > size.width * 0.7 { turn(forward: true) }
+            // #1735: left-handed readers turn forward from the left side and back from the right.
+            let forward = store.leftHanded ? location.x < size.width * 0.3
+                : location.x > size.width * 0.7
+            let backward = store.leftHanded ? location.x > size.width * 0.7
+                : location.x < size.width * 0.3
+            if backward { turn(forward: false) }
+            else if forward { turn(forward: true) }
             else { withAnimation(.smooth(duration: 0.2)) { chrome = true } }
         } else {
             if location.y < size.height * 0.3 { turn(forward: false) }
@@ -1240,6 +1245,13 @@ struct NovelReaderView: View {
                 }
             }
             #endif
+            // #1735: which side a tap turns forward, so a left-handed reader can keep the next page on the left.
+            if store.pageTurn == .pages {
+                pickerRow(L10n.text("Page Turn Taps"), selection: $store.leftHanded) {
+                    Text(L10n.text("Right Side")).tag(false)
+                    Text(L10n.text("Left Side")).tag(true)
+                }
+            }
             HStack(spacing: 8) {
                 ForEach(NovelFontChoice.allCases) { choice in
                     Button { store.font = choice } label: {
