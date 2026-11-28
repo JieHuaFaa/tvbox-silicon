@@ -283,12 +283,17 @@ struct HomeView: View {
     private func pinnedSources(_ config: Subscription) -> some View {
         VStack(alignment: .leading, spacing: Layout.headerSpacing) {
             SectionHeader(title: L10n.text("Pinned Sources")) { openSection(.sites) }
-            LazyVGrid(columns: Layout.cardColumns, spacing: Layout.cardSpacing) {
-                ForEach(store.orderedSites(config).filter { store.pinnedSources.contains($0, origin: config.origin) }) { site in
-                    RouteLink { SiteView(site: site, origin: config.origin, jarURL: config.spiderURL) } label: { SiteCard(site: site, marksPinned: false) }
-                        .tileButton().contextMenu { PinSourceButton(site: site, origin: config.origin) }
-                        .accessibilityIdentifier("home.pinned." + site.key)
-                }
+            // One sideways row, like the favorites and Continue Watching above, so a long list of pinned sources
+            // no longer turns into a grid that pushes the sections below it off the page (#2231).
+            ChipRow {
+                HStack(spacing: Layout.cardSpacing) {
+                    ForEach(store.orderedSites(config).filter { store.pinnedSources.contains($0, origin: config.origin) }) { site in
+                        RouteLink { SiteView(site: site, origin: config.origin, jarURL: config.spiderURL) } label: { SiteCard(site: site, marksPinned: false) }
+                            .tileButton().contextMenu { PinSourceButton(site: site, origin: config.origin) }
+                            .frame(width: Layout.cardMin)
+                            .accessibilityIdentifier("home.pinned." + site.key)
+                    }
+                }.padding(.vertical, 6)
             }
         }.accessibilityIdentifier("home.pinnedSources")
     }
