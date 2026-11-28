@@ -55,6 +55,8 @@ struct PlayerEpisodesSheet: View {
     @State private var page: Int?
     /// The same 倒序 as the video's page.
     @AppStorage("episodesReversed") private var reversesEpisodes = false
+    /// Rows of episode names instead of TMDB stills, for long series picked through quickly (#2071).
+    @AppStorage("episodesListMode") private var listMode = false
     /// The viewer chose an episode here: the sheet closes once it plays.
     @State private var picked = false
 
@@ -116,7 +118,7 @@ struct PlayerEpisodesSheet: View {
         // TMDB hasn't answered, tiles with the episodes' numbers, also as on the page, so its stills fade into the same
         // tiles: even the answer this device kept arrives a moment after the sheet opens, and rows turning into tiles
         // then drew every tile at a row's width, shrinking, over the others.
-        let tiles = !tmdb.episodeTiles(items).isEmpty || (tmdbPending(catalog) && items.count <= 60)
+        let tiles = !listMode && (!tmdb.episodeTiles(items).isEmpty || (tmdbPending(catalog) && items.count <= 60))
         return ScrollView {
             VStack(alignment: .leading, spacing: 14) {
                 header(catalog, count: items.count)
@@ -137,7 +139,7 @@ struct PlayerEpisodesSheet: View {
                         .font(.footnote).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                grid(shownPage.map { Array(items[pages[$0]]) } ?? items, tiles: tiles, labels: catalog.labels, details: catalog.details, current: current?.id)
+                grid(shownPage.map { Array(items[pages[$0]]) } ?? items, tiles: tiles, list: listMode, labels: catalog.labels, details: catalog.details, current: current?.id)
             }
             .padding(16)
         }
@@ -155,6 +157,17 @@ struct PlayerEpisodesSheet: View {
             Text("\(count)").font(.subheadline).monospacedDigit().foregroundStyle(.secondary)
             Spacer(minLength: 8)
             if tmdb.details != nil { TMDBBadge() }
+            // #2071: stills or a list of names, remembered for the next time the sheet opens.
+            Button { listMode.toggle() } label: {
+                Image(systemName: listMode ? "list.bullet" : "photo.on.rectangle")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(listMode ? Brand.accent : Color.secondary)
+                    .frame(minWidth: 32, minHeight: 32).contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .help(L10n.text(listMode ? "Thumbnails" : "List View"))
+            .accessibilityLabel(L10n.text(listMode ? "Thumbnails" : "List View"))
+            .accessibilityAddTraits(listMode ? .isSelected : [])
             Button { reversesEpisodes.toggle() } label: {
                 Image(systemName: "arrow.up.arrow.down")
                     .font(.subheadline.weight(.semibold))
@@ -173,7 +186,7 @@ struct PlayerEpisodesSheet: View {
         tmdb.phase == .looking || (tmdb.phase == .idle && TMDBLookup.applies(to: catalog.client.site))
     }
 
-    private func grid(_ items: [Episode], tiles showsStills: Bool, labels: [Episode.ID: String], details: [Episode.ID: String],
+    private func grid(_ items: [Episode], tiles showsStills: Bool, list: Bool, labels: [Episode.ID: String], details: [Episode.ID: String],
                       current: Episode.ID?) -> some View {
         let stills = tmdb.episodes(items)
         let titles = Dictionary(items.map { ($0.id, labels[$0.id] ?? EpisodeRow.title($0.name)) }, uniquingKeysWith: { first, _ in first })
@@ -181,7 +194,7 @@ struct PlayerEpisodesSheet: View {
         // each, the whole name, because what tells two files of a film apart (HDR, the audio, the subtitles) is at the
         // end of the name, where a card's … was (#897).
         let short = (titles.values.map(\.count).max() ?? 0) <= 6
-        let rows = !showsStills && !short && titles.contains { Self.overflowsCard($0.value, withDetail: details[$0.key] != nil) }
+        let rows = list || (!showsStills && !short && titles.contains { Self.overflowsCard($0.value, withDetail: details[$0.key] != nil) })
         let minimum: CGFloat = showsStills ? Self.stillTile : short ? Self.shortTile : Self.longTile
         let shown = reversesEpisodes ? items.reversed() : items
         let columns = rows ? [GridItem(.flexible(), alignment: .top)]
