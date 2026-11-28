@@ -204,6 +204,18 @@ public final class LXSourceLibrary: @unchecked Sendable {
         if !enabled { Task { await LXSourceRuntime.shared.close(id) } }
     }
 
+    /// Fetches a source again from the address it was added from, replacing it in place (#1436). A source added from
+    /// a file has no address to fetch, so it throws.
+    @discardableResult
+    public func refresh(_ id: String) async throws -> (source: LXSource, changed: Bool) {
+        guard let previous = sources.first(where: { $0.id == id }) else { throw TVError.invalidURL }
+        guard let origin = previous.origin else { throw TVError.unsupported(L10n.text("This source has no address to update from.")) }
+        let script = try await Self.download(origin)
+        let changed = (try? Data(contentsOf: file(id))) != Data(script.utf8)
+        let source = try await add(script: script, origin: origin)
+        return (source, changed)
+    }
+
     /// The source `script` was already added as: the same text, or a script fetched from the same address.
     func existing(script: String, origin: URL?) -> LXSource? {
         let text = Data(script.utf8)

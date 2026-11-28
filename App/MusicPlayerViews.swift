@@ -741,6 +741,21 @@ struct MusicScrubber: View {
         message = nil
     }
 
+    /// Fetches a source again from the address it was added from, kept in its place and switch (#1436).
+    func update(_ source: LXSource) {
+        guard !busy, source.origin != nil else { return }
+        busy = true; message = nil; failed = false
+        Task {
+            do {
+                let result = try await LXSourceLibrary.shared.refresh(source.id)
+                sources = LXSourceLibrary.shared.sources
+                message = result.changed ? L10n.text("Updated “%@”.", result.source.info.name)
+                    : L10n.text("“%@” is up to date.", result.source.info.name)
+            } catch { report(error) }
+            busy = false
+        }
+    }
+
     /// Sources are asked in the list's order; this one first from the next song on (#1537).
     func moveToTop(_ source: LXSource) {
         LXSourceLibrary.shared.moveToTop(source.id)
@@ -781,6 +796,9 @@ struct MusicLXSourcesSection: View {
         TVSettingsSection(title: L10n.text("LX Music Sources"), footer: [model.message, MusicLXSourcesModel.note].compactMap { $0 }.joined(separator: "\n\n")) {
             ForEach(model.sources) { source in
                 TVSettingsToggle(title: source.info.name, detail: MusicLXSourcesModel.detail(source), isOn: model.enabled(source))
+                if source.origin != nil {
+                    TVSettingsAction(title: L10n.text("Update “%@”", source.info.name), busy: model.busy) { model.update(source) }
+                }
                 if !model.isFirst(source) {
                     TVSettingsAction(title: L10n.text("Move “%@” to Top", source.info.name)) { model.moveToTop(source) }
                 }
@@ -813,6 +831,12 @@ struct MusicLXSourcesSection: View {
                             Text(MusicLXSourcesModel.detail(source)).font(.caption).foregroundStyle(.secondary)
                         }
                         Spacer(minLength: 8)
+                        if source.origin != nil {
+                            Button { model.update(source) } label: { Image(systemName: "arrow.clockwise") }
+                                .buttonStyle(.borderless)
+                                .disabled(model.busy)
+                                .accessibilityLabel(L10n.text("Update “%@”", source.info.name))
+                        }
                         Button(role: .destructive) { model.remove(source) } label: { Image(systemName: "trash") }
                             .buttonStyle(.borderless)
                             .accessibilityLabel(L10n.text("Remove “%@”", source.info.name))
@@ -820,6 +844,9 @@ struct MusicLXSourcesSection: View {
                 }
                 .settingsSwitch()
                 .contextMenu {
+                    if source.origin != nil {
+                        Button { model.update(source) } label: { Label(L10n.text("Update “%@”", source.info.name), systemImage: "arrow.clockwise") }
+                    }
                     if !model.isFirst(source) {
                         Button { model.moveToTop(source) } label: { Label(L10n.text("Move to Top"), systemImage: "pin") }
                     }
